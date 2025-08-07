@@ -11,10 +11,10 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'CyberSecEval 4',
+    title: 'CyberSecEval 3',
     description: (
       <>
-        This version introduces AutoPatchBench, a benchmark that measures an LLM agent's capability to automatically patch security vulnerabilities in native code.
+        This latest version introduces three new test suites: visual prompt injection tests, spear phishing capability tests, and autonomous offensive cyber operations tests.
       </>
     ),
   },

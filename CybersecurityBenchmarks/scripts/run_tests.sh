@@ -23,9 +23,4 @@ python3 -m venv "$VENV_ROOT"
 source "$VENV_ROOT/bin/activate"
 pip3 install -r CybersecurityBenchmarks/requirements.txt
 
-# Command help runs properly
-python3 -m CybersecurityBenchmarks.benchmark.run --help
-
-# Tests pass
-cd CybersecurityBenchmarks
-python3 -m unittest discover benchmark.tests
+(cd CybersecurityBenchmarks && python3 -m unittest)

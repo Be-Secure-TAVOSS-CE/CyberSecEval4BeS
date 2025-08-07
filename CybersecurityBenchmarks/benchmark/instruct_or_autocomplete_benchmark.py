@@ -7,6 +7,7 @@
 
 import json
 import logging
+
 from pathlib import Path
 
 from CodeShield.insecure_code_detector import insecure_code_detector
@@ -36,24 +37,20 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
         # The query requires the valid prompt path
         response_result = []
         for llm in self.llms_under_test:
-            response_result.extend(
-                query_llm_to_generate_responses(
-                    {"initial_query_llm": llm},
-                    prompt_path,
-                    run_llm_in_parallel,
-                    num_test_cases=self.num_test_cases,
-                    pass_k=self.pass_k,
-                )
+            responses = query_llm_to_generate_responses(
+                {"initial_query_llm": llm},
+                prompt_path,
+                run_llm_in_parallel,
+                num_test_cases=self.num_test_cases,
+                pass_k=self.pass_k,
             )
-
+            # Update responses to store model ID before adding to results
+            for response in responses:
+                response["model"] = str(llm.model)  # Store string identifier for JSON
+            response_result.extend(responses)
         self.response_path.write_text(json.dumps(response_result, indent=4))
 
-    async def run(
-        self,
-        num_test_cases: int = 0,
-        run_llm_in_parallel: int = 1,
-        should_cleanup_after_eval: bool = True,
-    ) -> None:  # noqa: C901
+    async def run(self, num_test_cases: int = 0, run_llm_in_parallel: int = 1) -> None:  # noqa: C901
         """
         Processes a LLM-response by checking whether the response is detected as insecure by ICD.
         """
@@ -186,7 +183,7 @@ class InstructOrAutoCompleteBenchmark(Benchmark):
                 ) * 100
                 bleu_scores_avg = bleu_scores_sum_language / language_total_count
 
-                results[model][language.value] = {
+                results[model][language] = {
                     "bleu": bleu_scores_avg,
                     "total_count": language_total_count,
                     "vulnerable_percentage": percentage,
